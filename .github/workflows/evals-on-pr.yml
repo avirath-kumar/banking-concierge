@@ -6,6 +6,7 @@ name: Engine eval on PR
 # run in parallel and each posts its own PR comment.
 
 on:
+  workflow_dispatch:
   pull_request:
     branches: [main]
     # Re-run when the PR is pushed to or reopened; skip drafts so opening a
@@ -23,7 +24,7 @@ permissions:
 
 jobs:
   evaluate:
-    if: github.event.pull_request.draft == false
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -50,12 +51,20 @@ jobs:
       # Optional gateway override (leave unset to call OpenAI directly)
       BASE_URL: ${{ vars.BASE_URL }}
       CONCIERGE_MODEL: ${{ vars.CONCIERGE_MODEL || 'gpt-4o-mini' }}
+      PR_NUMBER: ${{ github.event.pull_request.number || 'manual' }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      HEAD_BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
 
     steps:
       - name: Checkout PR head
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Protect package downloads
+        uses: socketdev/action@ba6de6cc0565af1f42295590380973573297e31f
+        with:
+          mode: firewall-free
 
       - name: Set up uv
         uses: astral-sh/setup-uv@v5
@@ -72,16 +81,16 @@ jobs:
         id: experiment
         run: |
           set -euo pipefail
-          PR=${{ github.event.pull_request.number }}
-          SHA_SHORT=$(git rev-parse --short "${{ github.event.pull_request.head.sha }}")
+          PR="$PR_NUMBER"
+          SHA_SHORT=$(git rev-parse --short "$HEAD_SHA")
           PREFIX="${{ matrix.experiment_prefix }}-pr-${PR}-${SHA_SHORT}"
 
           uv run python evals/run_experiment.py "${{ matrix.alias }}" \
             --dataset "${{ matrix.dataset }}" \
             --experiment-prefix "$PREFIX" \
             --metadata "pr_number=${PR}" \
-            --metadata "commit_sha=${{ github.event.pull_request.head.sha }}" \
-            --metadata "branch=${{ github.event.pull_request.head.ref }}" \
+            --metadata "commit_sha=${HEAD_SHA}" \
+            --metadata "branch=${HEAD_BRANCH}" \
             --metadata "ci_run_id=${{ github.run_id }}" \
             --metadata "engine_issue=${{ matrix.alias }}" \
             | tee experiment.log
@@ -92,7 +101,7 @@ jobs:
           echo "dataset_name=$(grep '^DATASET_NAME=' experiment.log | cut -d= -f2-)" >> "$GITHUB_OUTPUT"
 
       - name: Comment on PR with experiment link
-        if: success()
+        if: success() && github.event_name == 'pull_request'
         uses: actions/github-script@v7
         env:
           ALIAS: ${{ matrix.alias }}
@@ -119,7 +128,7 @@ jobs:
             });
 
       - name: Comment on PR with failure
-        if: failure()
+        if: failure() && github.event_name == 'pull_request'
         uses: actions/github-script@v7
         env:
           ALIAS: ${{ matrix.alias }}

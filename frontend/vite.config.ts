@@ -1,7 +1,9 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-// We serve the built bundle from the LangGraph agent server at `/app/`.
+const apiTarget = process.env.CONCIERGE_API_URL || "http://localhost:2024";
+
+// We serve the built bundle from the LangGraph agent server at `/concierge/`.
 // Use a relative base so all asset URLs are sub-path safe.
 export default defineConfig({
   plugins: [react()],
@@ -11,10 +13,11 @@ export default defineConfig({
     proxy: {
       // In `npm run dev`, forward agent-server endpoints to `langgraph dev`
       // on :2024 so the frontend can talk to the local agent.
-      "/threads": "http://localhost:2024",
-      "/runs": "http://localhost:2024",
-      "/assistants": "http://localhost:2024",
-      "/info": "http://localhost:2024",
+      "/threads": apiTarget,
+      "/runs": apiTarget,
+      "/assistants": apiTarget,
+      "/info": apiTarget,
+      "/concierge-api": apiTarget,
     },
   },
   build: {

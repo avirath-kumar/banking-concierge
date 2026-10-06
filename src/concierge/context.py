@@ -17,9 +17,15 @@ it is not the runtime source of truth.
 
 from __future__ import annotations
 
+import logging
 import os
 
 from langsmith import Client
+from langsmith.utils import LangSmithError
+
+from concierge.prompts import SYSTEM_PROMPT
+
+logger = logging.getLogger(__name__)
 
 CONTEXT_HUB_REPO = "banking-concierge-agent"
 
@@ -36,15 +42,20 @@ def get_prompt() -> str:
     the hub is unreachable or the tag/repo doesn't exist yet — run
     ``python -m scripts.setup_context_hub`` to seed and promote it.
     """
+    gateway_key = os.getenv("CONCIERGE_GATEWAY_API_KEY")
+    if not gateway_key and not os.getenv("LANGSMITH_API_KEY"):
+        return SYSTEM_PROMPT
+
     try:
         version = CONTEXT_HUB_VERSION or None
-        agent = Client().pull_agent(CONTEXT_HUB_REPO, version=version)
+        agent = Client(api_key=gateway_key).pull_agent(CONTEXT_HUB_REPO, version=version)
         content = getattr(agent.files["AGENTS.md"], "content", "")
         if content:
             return content
-    except Exception:
-        pass
-
-    from concierge.prompts import SYSTEM_PROMPT
+    except (LangSmithError, KeyError) as exc:
+        logger.warning(
+            "Context Hub prompt unavailable (%s); using the local seed.",
+            type(exc).__name__,
+        )
 
     return SYSTEM_PROMPT

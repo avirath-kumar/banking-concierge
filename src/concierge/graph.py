@@ -39,7 +39,7 @@ def _make_model() -> ChatOpenAI:
             model=model_name,
             temperature=0.2,
             base_url=base_url,
-            api_key=os.environ["LANGSMITH_API_KEY"],
+            api_key=os.getenv("CONCIERGE_GATEWAY_API_KEY") or os.environ["LANGSMITH_API_KEY"],
         )
     else:
         client = ChatOpenAI(model=model_name, temperature=0.2)

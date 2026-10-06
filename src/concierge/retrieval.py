@@ -17,11 +17,13 @@ KB_DIR = Path(__file__).parent / "kb"
 def _make_embeddings() -> OpenAIEmbeddings:
     """Create an OpenAIEmbeddings instance."""
     base_url = os.getenv("BASE_URL")
-    return OpenAIEmbeddings(
-        model="text-embedding-3-small",
-        base_url=base_url,
-        api_key=os.environ["LANGSMITH_API_KEY"],
-    )
+    if base_url:
+        return OpenAIEmbeddings(
+            model="text-embedding-3-small",
+            base_url=base_url,
+            api_key=os.getenv("CONCIERGE_GATEWAY_API_KEY") or os.environ["LANGSMITH_API_KEY"],
+        )
+    return OpenAIEmbeddings(model="text-embedding-3-small")
 
 
 def _load_kb_documents() -> list[Document]:

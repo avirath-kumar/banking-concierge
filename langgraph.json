@@ -1,5 +1,5 @@
 {
-  "dependencies": ["."],
+  "dependencies": ["requirements-cloud.txt", "."],
   "graphs": {
     "agent": "./src/concierge/graph.py:graph"
   },

@@ -1,0 +1,15 @@
+.env
+.env.*
+*.pem
+*.key
+*.crt
+credentials.json
+.git/
+.venv/
+node_modules/
+**/node_modules/
+__pycache__/
+**/__pycache__/
+.DS_Store
+.langgraph_api/
+docs/

@@ -25,3 +25,6 @@ node_modules/
 
 # LangGraph CLI runtime state
 .langgraph_api/
+
+# Local implementation plans and setup notes
+/docs/
