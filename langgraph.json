@@ -1,5 +1,9 @@
 {
-  "dependencies": ["requirements-cloud.txt", "."],
+  "dependencies": ["."],
+  "dockerfile_lines": [
+    "COPY requirements-cloud.txt /tmp/requirements-cloud.txt",
+    "RUN PYTHONDONTWRITEBYTECODE=1 uv pip install --system --no-cache-dir -c /api/constraints.txt -r /tmp/requirements-cloud.txt"
+  ],
   "graphs": {
     "agent": "./src/concierge/graph.py:graph"
   },
