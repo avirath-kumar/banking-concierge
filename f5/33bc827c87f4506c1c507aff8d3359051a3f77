@@ -1,0 +1,66 @@
+.gitignore
+  s_6a432ef82fa08f::t_d90032edb2a60a 28-30
+tests/test_context.py
+  s_6a432ef82fa08f::t_08003af8248065 1-4,6-7,10-21,53,65-67
+  s_6a432ef82fa08f::t_bcdbcb70f75cdd 54-64
+  s_6a432ef82fa08f::t_c0d3aa7de2cf2a 5,8-9,22-52
+requirements-cloud.txt
+  s_6a432ef82fa08f::t_c9d60bcaf27691 1-153
+langgraph.json
+  s_6a432ef82fa08f::t_82ae82412826d6 2
+src/concierge/retrieval.py
+  s_6a432ef82fa08f::t_bcdbcb70f75cdd 24
+  s_6a432ef82fa08f::t_d90032edb2a60a 20-23,25-26
+src/concierge/graph.py
+  s_6a432ef82fa08f::t_bcdbcb70f75cdd 42
+evals/evaluators.py
+  s_6a432ef82fa08f::t_bcdbcb70f75cdd 47
+.dockerignore
+  s_6a432ef82fa08f::t_bcdbcb70f75cdd 1-15
+src/concierge/context.py
+  s_6a432ef82fa08f::t_c0d3aa7de2cf2a 20,24,28,55-59
+  s_6a432ef82fa08f::t_08003af8248065 26-27,47-48
+  s_6a432ef82fa08f::t_bcdbcb70f75cdd 45-46,51
+  s_6a432ef82fa08f::t_13045db85472b5 25
+tests/test_graph.py
+  s_6a432ef82fa08f::t_c0d3aa7de2cf2a 1-13,15-27,29-48,50-53
+  s_6a432ef82fa08f::t_dfb8922ff53b07 14,28,49
+frontend/vite.config.ts
+  s_6a432ef82fa08f::t_c0d3aa7de2cf2a 4-5,16-20
+  s_6a432ef82fa08f::t_d90032edb2a60a 6
+tests/test_retrieval.py
+  s_6a432ef82fa08f::t_bcdbcb70f75cdd 43-52
+  s_6a432ef82fa08f::t_d90032edb2a60a 1-6,9-16,18-29,31-42,53-55
+  s_6a432ef82fa08f::t_dfb8922ff53b07 7-8,17,30
+.github/workflows/evals-on-pr.yml
+  s_6a432ef82fa08f::t_82ae82412826d6 9,27,54-56,62-67,84-85,92-93,104,131
+frontend/dist/assets/highlighted-body-OFNGDK62-D_f3tF69.js
+  s_6a432ef82fa08f::t_34d514988ac655 1
+frontend/dist/assets/index-BLhAzsri.js
+  s_6a432ef82fa08f::t_f08cc09e7c4aac 49,181
+frontend/dist/index.html
+  s_6a432ef82fa08f::t_82fb1e5274e08e 8
+frontend/package-lock.json
+  s_6a432ef82fa08f::t_c4a5c984269b5b 227-229,233,242-244,252-254,258-266,283-285,289-290,300-302,306-307,317-319,327-329,333-334,341-343,347-349,369-371,379-381,389-391,399-401,405-406,413-415,419,470-472,476-478,485-487,491-496,504-506,510-511,1190-1192,1195,5883-5885,5896-5898,5916-5920,5930-5932,6052-6054,6551-6553,6634-6636,6643-6645,6772-6780,7833-7835,7838,7840,7843,7849-7850,7852-7853,8454-8456,8472-8474,8622-8624,8642,8644,8651-8653,9154-9156,9201-9206,9439-9441,9631-9633
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f533bc827c87f4506c1c507aff8d3359051a3f77",
+  "prompts": {},
+  "humans": {
+    "h_7cae82992be157": {
+      "author": "Avi Kumar <avirath.kmr@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_6a432ef82fa08f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a10eab-2951-72f1-b830-44324f27816c",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Avi Kumar <avirath.kmr@gmail.com>"
+    }
+  }
+}
