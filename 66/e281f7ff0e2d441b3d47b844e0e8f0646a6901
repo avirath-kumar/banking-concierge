@@ -1,0 +1,25 @@
+requirements-cloud.txt
+  s_6a432ef82fa08f::t_09aaab07cef473 1-4,10,12,14-15
+  s_6a432ef82fa08f::t_acff20e4ebc604 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "66e281f7ff0e2d441b3d47b844e0e8f0646a6901",
+  "prompts": {},
+  "humans": {
+    "h_7cae82992be157": {
+      "author": "Avi Kumar <avirath.kmr@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_6a432ef82fa08f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a10eab-2951-72f1-b830-44324f27816c",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Avi Kumar <avirath.kmr@gmail.com>"
+    }
+  }
+}
