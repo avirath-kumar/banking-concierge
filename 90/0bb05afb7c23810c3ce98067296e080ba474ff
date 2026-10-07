@@ -1,0 +1,44 @@
+evals/evaluators.py
+  s_6a432ef82fa08f::t_ea3436f3a065d4 42,46,50
+  s_6a432ef82fa08f::t_af808ec07a1d87 82
+  s_6a432ef82fa08f::t_c2040de52b9828 37
+src/concierge/keyword_retrieval.py
+  s_6a432ef82fa08f::t_c2040de52b9828 1-8,12-40,44-50
+  s_6a432ef82fa08f::t_b9ec65b1763cc8 9-11,41-43
+.env.example
+  s_6a432ef82fa08f::t_c2040de52b9828 13-20
+tests/test_retrieval.py
+  s_6a432ef82fa08f::t_c2040de52b9828 9,54-74
+  s_6a432ef82fa08f::t_c0cde7ea7402b9 75-76
+src/concierge/retrieval.py
+  s_6a432ef82fa08f::t_b9ec65b1763cc8 1
+  s_6a432ef82fa08f::t_c2040de52b9828 14-15,45,48-52,54,58-62
+src/concierge/graph.py
+  s_6a432ef82fa08f::t_ea3436f3a065d4 35,41,46
+.github/workflows/evals-on-pr.yml
+  s_6a432ef82fa08f::t_c2040de52b9828 10-14,16,23,35,60-61
+README.md
+  s_6a432ef82fa08f::t_b9ec65b1763cc8 69,75-76,79-94
+  s_6a432ef82fa08f::t_20706ec0dfd1da 95
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "900bb05afb7c23810c3ce98067296e080ba474ff",
+  "prompts": {},
+  "humans": {
+    "h_7cae82992be157": {
+      "author": "Avi Kumar <avirath.kmr@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_6a432ef82fa08f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a10eab-2951-72f1-b830-44324f27816c",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Avi Kumar <avirath.kmr@gmail.com>"
+    }
+  }
+}
