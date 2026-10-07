@@ -18,6 +18,7 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
 
 from concierge.context import get_prompt
+from concierge.redaction import redact_human_messages
 from concierge.state import ConciergeState
 from concierge.tools import TOOLS
 
@@ -50,7 +51,10 @@ def _make_model() -> ChatOpenAI:
 def agent_node(state: ConciergeState) -> dict:
     """Call the LLM with the message history plus the system prompt."""
     model = _make_model()
-    messages = [SystemMessage(content=SYSTEM_PROMPT), *state["messages"]]
+    messages = [
+        SystemMessage(content=SYSTEM_PROMPT),
+        *redact_human_messages(state["messages"]),
+    ]
     response = model.invoke(messages)
 
     retrieval_calls = state.get("retrieval_calls", 0)

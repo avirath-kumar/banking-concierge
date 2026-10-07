@@ -48,6 +48,27 @@ class GraphToolLoopTests(unittest.TestCase):
         self.assertIsInstance(second_prompt[-1], ToolMessage)
         self.assertEqual(result["messages"][-1].content, expected_answer)
 
+    def test_model_receives_redacted_human_pii(self) -> None:
+        model = Mock()
+        model.invoke.return_value = AIMessage(content="Please share the customer ID.")
+
+        with patch("concierge.graph._make_model", return_value=model):
+            graph.invoke(
+                {
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": "Customer's SSN is 552-77-1230, look them up?",
+                        }
+                    ]
+                }
+            )
+
+        prompt = model.invoke.call_args.args[0]
+        rendered = " ".join(str(message.content) for message in prompt[1:])
+        self.assertNotIn("552-77-1230", rendered)
+        self.assertIn("***-**-1230", rendered)
+
 
 if __name__ == "__main__":
     unittest.main()
