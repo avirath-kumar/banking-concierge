@@ -66,13 +66,32 @@ Required environment variables (see `.env.example`):
 
 | Var | Purpose |
 |---|---|
-| `OPENAI_API_KEY` | Agent + judge model calls |
+| `OPENAI_API_KEY` | Agent + judge calls when using OpenAI directly; unnecessary with the gateway |
 | `LANGSMITH_API_KEY` | Tracing, datasets, experiments, deployment |
 | `LANGSMITH_TRACING` | `"true"` to send traces |
 | `LANGSMITH_PROJECT` | Tracing project for ad-hoc and loadgen runs |
 | `LANGSMITH_WORKSPACE_ID` | Workspace (tenant) the Context Hub repo is seeded into |
 | `CONCIERGE_MODEL` | _(optional)_ override the agent's chat model |
+| `JUDGE_MODEL` | _(optional)_ override the evaluation judge; defaults to `gpt-4o` |
+| `CONCIERGE_RETRIEVAL` | `embeddings` (default) or local `keyword` retrieval |
 | `LANGGRAPH_DEPLOYMENT_URL` | _(optional)_ deployment URL for `load_generation.py --mode remote` |
+
+### Anthropic-only gateway workspace
+
+Use the gateway's OpenAI-compatible base URL, `https://gateway.smith.langchain.com/v1`,
+and set `CONCIERGE_MODEL` and `JUDGE_MODEL` to an available provider-prefixed Claude
+model, such as `anthropic/claude-sonnet-5-5`. Set `CONCIERGE_RETRIEVAL=keyword` to
+search the FAQ locally with BM25, since Claude does not provide embeddings. No
+OpenAI key or additional dependency is needed. Anthropic calls omit temperature;
+judges use native JSON-schema output. The same tools, datasets, and chat UI work.
+
+Choose Anthropic separately for Insights in the workspace's model configurations.
+Model changes can alter the baseline failure rates, so rerun all experiments.
+
+The `demo-anthropic` branch uses the `anthropic-demo` GitHub environment for CI
+secrets and variables. Its PRs and manual runs use that environment, preserving
+the repository-level settings used by the original demo. Manual runs can select
+a different environment through the workflow's optional `environment` input.
 
 ### Seed Context Hub (one-time)
 

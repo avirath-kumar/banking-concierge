@@ -34,19 +34,20 @@ from langchain_core.messages.utils import convert_to_openai_messages
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
 
-JUDGE_MODEL_NAME = "gpt-4o"
+JUDGE_MODEL_NAME = os.getenv("JUDGE_MODEL", "gpt-4o")
 
 
 def _make_judge() -> ChatOpenAI:
     base_url = os.getenv("BASE_URL")
+    temperature = None if JUDGE_MODEL_NAME.startswith("anthropic/") else 0
     if base_url:
         return ChatOpenAI(
             model=JUDGE_MODEL_NAME,
-            temperature=0,
+            temperature=temperature,
             base_url=base_url,
             api_key=os.getenv("CONCIERGE_GATEWAY_API_KEY") or os.environ["LANGSMITH_API_KEY"],
         )
-    return ChatOpenAI(model=JUDGE_MODEL_NAME, temperature=0)
+    return ChatOpenAI(model=JUDGE_MODEL_NAME, temperature=temperature)
 
 
 _judge = _make_judge()
@@ -78,7 +79,7 @@ def create_llm_as_judge(
     means, so a metric's polarity lives in its prompt, not here.
     """
 
-    structured_judge = judge.with_structured_output(_JudgeResult)
+    structured_judge = judge.with_structured_output(_JudgeResult, method="json_schema")
 
     def scorer(**prompt_vars: Any) -> dict:
         verdict = cast(_JudgeResult, structured_judge.invoke(prompt.format(**prompt_vars)))

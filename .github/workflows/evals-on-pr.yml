@@ -7,15 +7,20 @@ name: Engine eval on PR
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: Optional GitHub environment for an isolated LangSmith workspace
+        required: false
+        default: ""
   pull_request:
-    branches: [main]
+    branches: [main, demo-anthropic]
     # Re-run when the PR is pushed to or reopened; skip drafts so opening a
     # WIP doesn't burn tokens.
     types: [opened, synchronize, reopened, ready_for_review]
 
 # One workflow run per PR. New commits cancel in-flight matrix jobs.
 concurrency:
-  group: engine-eval-${{ github.event.pull_request.number }}
+  group: engine-eval-${{ github.event.pull_request.number || github.ref_name }}-${{ inputs.environment }}
   cancel-in-progress: true
 
 permissions:
@@ -27,6 +32,7 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    environment: ${{ inputs.environment || ((github.base_ref == 'demo-anthropic' || github.ref_name == 'demo-anthropic') && 'anthropic-demo') || '' }}
 
     strategy:
       # Don't cancel sibling jobs when one dataset fails — a missing dataset
@@ -51,6 +57,8 @@ jobs:
       # Optional gateway override (leave unset to call OpenAI directly)
       BASE_URL: ${{ vars.BASE_URL }}
       CONCIERGE_MODEL: ${{ vars.CONCIERGE_MODEL || 'gpt-4o-mini' }}
+      JUDGE_MODEL: ${{ vars.JUDGE_MODEL || 'gpt-4o' }}
+      CONCIERGE_RETRIEVAL: ${{ vars.CONCIERGE_RETRIEVAL || 'embeddings' }}
       PR_NUMBER: ${{ github.event.pull_request.number || 'manual' }}
       HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       HEAD_BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}

@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from pydantic import SecretStr
 
-from concierge.retrieval import _make_embeddings
+from concierge.retrieval import _make_embeddings, retrieve
 
 
 class EmbeddingsAuthenticationTests(unittest.TestCase):
@@ -49,6 +49,29 @@ class EmbeddingsAuthenticationTests(unittest.TestCase):
             embeddings = _make_embeddings()
 
         self.assertEqual(embeddings.openai_api_key, SecretStr("placeholder-runtime"))
+
+
+class KeywordRetrievalTests(unittest.TestCase):
+    def test_faq_retrieval_needs_no_embedding_credentials(self) -> None:
+        with patch.dict(os.environ, {"CONCIERGE_RETRIEVAL": "keyword"}, clear=True):
+            with patch("concierge.retrieval._make_embeddings", side_effect=AssertionError("No provider calls")):
+                documents = retrieve("Everyday Checking monthly service fee waived", k=2)
+
+        self.assertEqual(len(documents), 2)
+        self.assertEqual(documents[0].metadata["source"], "checking_accounts.md")
+        self.assertIn("$10", documents[0].page_content)
+        self.assertIn("$500", documents[0].page_content)
+
+    def test_empty_and_unmatched_queries_return_no_documents(self) -> None:
+        with patch.dict(os.environ, {"CONCIERGE_RETRIEVAL": "keyword"}, clear=True):
+            self.assertEqual(retrieve(""), [])
+            self.assertEqual(retrieve("nonexistentxyzterm"), [])
+            self.assertEqual(retrieve("banking", k=0), [])
+
+    def test_unknown_retrieval_mode_fails_explicitly(self) -> None:
+        with patch.dict(os.environ, {"CONCIERGE_RETRIEVAL": "invalid"}, clear=True):
+            with self.assertRaises(ValueError):
+                retrieve("checking fees")
 
 
 if __name__ == "__main__":

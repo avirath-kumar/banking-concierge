@@ -1,4 +1,4 @@
-"""Vector-store retrieval over the synthetic banking knowledge base."""
+"""Banking FAQ retrieval through embeddings or local keyword search."""
 
 from __future__ import annotations
 
@@ -10,6 +10,8 @@ from langchain_core.documents import Document
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+from concierge.keyword_retrieval import search_documents
 
 KB_DIR = Path(__file__).parent / "kb"
 
@@ -40,13 +42,22 @@ def _load_kb_documents() -> list[Document]:
 
 
 @lru_cache(maxsize=1)
-def get_vector_store() -> InMemoryVectorStore:
+def get_kb_chunks() -> list[Document]:
     docs = _load_kb_documents()
     splitter = RecursiveCharacterTextSplitter(chunk_size=600, chunk_overlap=80)
-    chunks = splitter.split_documents(docs)
+    return splitter.split_documents(docs)
+
+
+@lru_cache(maxsize=1)
+def get_vector_store() -> InMemoryVectorStore:
     embeddings = _make_embeddings()
-    return InMemoryVectorStore.from_documents(chunks, embeddings)
+    return InMemoryVectorStore.from_documents(get_kb_chunks(), embeddings)
 
 
 def retrieve(query: str, k: int = 4) -> list[Document]:
+    mode = os.getenv("CONCIERGE_RETRIEVAL", "embeddings")
+    if mode == "keyword":
+        return search_documents(get_kb_chunks(), query, k)
+    if mode != "embeddings":
+        raise ValueError("CONCIERGE_RETRIEVAL must be 'embeddings' or 'keyword'")
     return get_vector_store().similarity_search(query, k=k)

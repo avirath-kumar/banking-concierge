@@ -32,17 +32,18 @@ SYSTEM_PROMPT = get_prompt()
 def _make_model() -> ChatOpenAI:
     model_name = os.getenv("CONCIERGE_MODEL", "gpt-4o-mini")
     base_url = os.getenv("BASE_URL")
+    temperature = None if model_name.startswith("anthropic/") else 0.2
     if base_url:
         # Route through the LangSmith LLM Gateway: callers authenticate with
         # their LangSmith API key; provider keys live in Provider Secrets.
         client = ChatOpenAI(
             model=model_name,
-            temperature=0.2,
+            temperature=temperature,
             base_url=base_url,
             api_key=os.getenv("CONCIERGE_GATEWAY_API_KEY") or os.environ["LANGSMITH_API_KEY"],
         )
     else:
-        client = ChatOpenAI(model=model_name, temperature=0.2)
+        client = ChatOpenAI(model=model_name, temperature=temperature)
     return client.bind_tools(TOOLS)
 
 
