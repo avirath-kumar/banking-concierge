@@ -49,6 +49,11 @@ def account_lookup(customer_id: str) -> dict:
     Returns the customer's name and a list of their account IDs, account
     types, and balances. Use this when the user wants details about an
     account.
+
+    Args:
+        customer_id: The customer ID in the format CUST-#### (e.g. CUST-0001).
+            If the rep gives any other identifier, ask them for the CUST-####
+            ID instead of calling this tool.
     """
     if customer_id.startswith("X"):
         raise RuntimeError(
@@ -68,8 +73,9 @@ def recent_transactions(customer_id: str, limit: int = 5) -> list[dict]:
     """Retrieve a customer's most recent transactions.
 
     Args:
-        customer_id: The customer ID (e.g. CUST-0001).
-        limit: Optional number of transactions to return.
+        customer_id: The customer ID in the format CUST-#### (e.g. CUST-0001).
+        limit: Number of transactions to return, from 1 to 50 (maximum 50).
+            If the rep asks for more than 50, request 50 and tell them the cap.
     """
     if limit <= 0:
         raise ValueError("limit must be positive")
