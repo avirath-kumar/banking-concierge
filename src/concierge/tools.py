@@ -42,14 +42,18 @@ def search_banking_docs(query: str, k: int = 4) -> str:
     return "\n\n---\n\n".join(blocks)
 
 
+def _last4(value: str) -> str:
+    return "".join(ch for ch in value if ch.isdigit())[-4:]
+
+
+def _mask_email(email: str) -> str:
+    local, _, domain = email.partition("@")
+    return f"{local[:1]}***@{domain}"
+
+
 @tool
 def account_lookup(customer_id: str) -> dict:
-    """Look up account information.
-
-    Returns the customer's name and a list of their account IDs, account
-    types, and balances. Use this when the user wants details about an
-    account.
-    """
+    """Look up a customer's name and accounts with masked identifiers (SSN/phone/card last four, masked email)."""
     if customer_id.startswith("X"):
         raise RuntimeError(
             "Customer record service is temporarily unavailable. Try again later."
@@ -60,7 +64,18 @@ def account_lookup(customer_id: str) -> dict:
             f"No customer found with ID {customer_id!r}. "
             "Customer IDs are in the format CUST-####."
         )
-    return dict(customer)
+    return {
+        "customer_id": customer["customer_id"],
+        "name": customer["name"],
+        "ssn_last4": _last4(customer["ssn"]),
+        "phone_masked": f"***-***-{_last4(customer['phone'])}",
+        "email_masked": _mask_email(customer["email"]),
+        "credit_cards": [
+            {"brand": card["brand"], "last4": _last4(card["number"]), "exp": card["exp"]}
+            for card in customer["credit_cards"]
+        ],
+        "accounts": [dict(account) for account in customer["accounts"]],
+    }
 
 
 @tool
