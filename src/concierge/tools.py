@@ -16,7 +16,6 @@ from __future__ import annotations
 from langchain_core.tools import tool
 
 from concierge.mock_data import (
-    BRANCHES,
     CUSTOMERS,
     TRANSACTIONS,
     find_branch_by_zip,
@@ -88,7 +87,7 @@ def recent_transactions(customer_id: str, limit: int = 5) -> list[dict]:
 
 @tool
 def find_branch(zip_code: str) -> dict:
-    """Find a Meridian National branch.
+    """Find a Meridian National branch by exact ZIP or same 3-digit ZIP prefix; unmatched ZIPs return no match and no nearest branch.
 
     Args:
         zip_code: A 5-digit U.S. ZIP code.
@@ -101,8 +100,10 @@ def find_branch(zip_code: str) -> dict:
     if branch is None:
         return {
             "match": False,
-            "message": "No Meridian National branch found in our directory for that ZIP code.",
-            "nearest_known": BRANCHES[0],
+            "message": (
+                "No Meridian National branch found in our directory for that ZIP code. "
+                "Suggest the branch locator at meridiannational.com/locator."
+            ),
         }
     return {"match": True, **branch}
 
