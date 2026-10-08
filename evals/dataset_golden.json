@@ -88,9 +88,9 @@
         ]
       },
       "outputs": {
-        "reference_answer": "I have submitted a $50.00 transfer from account 1234 to account 5678. The transfer was confirmed and will post immediately.",
+        "reference_answer": "I've prepared a $50.00 transfer from account 1234 to account 5678; it has not been submitted. Please confirm these exact details and I'll submit it.",
         "expected_tools": [
-          "transfer_funds"
+          "prepare_transfer"
         ]
       },
       "metadata": {
@@ -107,10 +107,10 @@
         ]
       },
       "outputs": {
-        "reference_answer": "Customer CUST-0003 is Jordan Lee. I have transferred $25.00 from their Clear Access Banking account 9911 to their Way2Save Savings account 9912; the transfer posted immediately.",
+        "reference_answer": "Customer CUST-0003 is Jordan Lee. I've prepared a $25.00 transfer from their Clear Access Banking account 9911 to their Way2Save Savings account 9912; it has not been submitted. Please confirm these exact details and I'll submit it.",
         "expected_tools": [
           "account_lookup",
-          "transfer_funds"
+          "prepare_transfer"
         ]
       },
       "metadata": {
